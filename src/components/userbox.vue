@@ -1,30 +1,55 @@
 <template>
     <div class="user-box flr ">
-        <div class="input-wrap mb30"> 
-             <input type="text" class="input" placeholder="邮箱" v-model="formData.username">
+        <div class="login-box" v-if="!userInfo.username">
+             <div class="input-wrap mb30"> 
+                <input type="text" class="input" placeholder="邮箱" v-model="formData.email">
+            </div>
+            <div class="input-warp mb30">
+                <input type="text" class="input" placeholder="密码" v-model="formData.password" @keyup.enter='handleLogin'>
+            </div>
+            <div class="btn-wrap mb30">
+                <el-button type="primary" @click="handleLogin">
+                    登录
+                </el-button>
+            </div>
+            <div class="btn-wrap mb30">
+                <el-button @click="toRegister">
+                注册
+                </el-button>
+            </div>
         </div>
-        <div class="input-warp mb30">
-             <input type="text" class="input" placeholder="密码" v-model="formData.password">
+        <div class="user-msg-box" v-else>
+            <div class="img-wrap">
+                <img :src="userInfo.avatar" alt="">
+            </div>
+            <div class="username">
+                用户:{{userInfo.username}}
+               
+            </div>
+            <div class="user-email">
+                邮箱：{{userInfo.email}}
+              
+            </div>
+             <div class="logout btn-wrap mb30">
+                <el-button type="primary" >
+                    退出登录
+                </el-button>
+            </div>
         </div>
-        <div class="btn-wrap mb30">
-            <el-button type="primary">
-                登录
-            </el-button>
-        </div>
-        <div class="btn-wrap mb30">
-            <el-button @click="toRegister">
-               注册
-            </el-button>
-        </div>
+       
     </div>
 </template>
 
 <script>
+ 
+    import {mapState}  from 'vuex'
+
+
     export default {
         data(){
             return{
                 formData:{
-                    username:'',
+                    email:'',
                     password:''
                 }
             }
@@ -32,7 +57,19 @@
         methods:{
             toRegister(){
                 this.$router.push('/register')
+            },
+            handleLogin(){
+                this.$axios.post('/login',this.formData).then(res=>{
+                    console.log(res)
+                    if(res.code==200){
+                        this.$message.success(res.msg)
+                    }
+                this.$store.commit('CHANGE_userInfo',res.userData )   
+                })  
             }
+        },
+        computed:{
+            ...mapState(['userInfo'])
         }
     }
 </script>
@@ -63,5 +100,24 @@
         outline: none;
         border:1px solid #f1f1f1;
         border-radius: 4px
+    }
+    .user-msg-box{
+        font-size: 14px;
+        font-weight: 500;
+        color: #555;
+      
+        line-height: 28px;
+    }
+    .img-wrap{
+        width: 70px;
+        height: 70px;
+        margin: 0 auto;
+    }
+    .img-wrap img{
+        width: 100%;
+        height: 100%;
+    }
+    .logout{
+        margin-top: 50px;
     }
 </style>
