@@ -35,7 +35,7 @@
         },
        methods:{
            handleRegister(){
-               console.log('hahahhah')
+               
                this.$axios.post('/user',this.formData).then(res=>{
                    if(res.code==200){
                        this.$message.success({message:res.msg})

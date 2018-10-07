@@ -14,9 +14,16 @@
                 v-model="formData.content"
                 ref="myQuillEditor"
                 :options="editorOption"
+                @change="handleChange"
                 >
             </quill-editor>
-            <el-button type="primary">
+            <div class="labels clearfix">
+                <span class="labels-title fll">标签：</span>
+                <el-radio-group v-model="formData.categories" class="fll" size="small">
+                    <el-radio-button v-for="label in labels" :label="label" :key="label._id">{{label.name}}</el-radio-button>
+                </el-radio-group>
+            </div>
+            <el-button type="primary" @click="handleSubmit">
                 发布笔记
             </el-button>
         </div>
@@ -38,7 +45,11 @@
             formData:{
                  content: '',
                  title:'',
+                 contentText:'',
+                categories: [],
             },
+             
+             labels: [],
           
             // 富文本框参数设置
             editorOption: {  
@@ -62,7 +73,34 @@
             } 
             }
         }
-        }
+        },
+        methods:{
+            handleChange({ quill, html, text }){
+                this.formData.contentText = text
+                this.formData.contentText = this.formData.contentText.substring(0,200)+'...'
+            },
+            getLabels () {
+                this.$axios.get('/category').then(res => {
+                    console.log(res)
+                    this.labels = res.data;
+                })
+            },
+            handleSubmit(){
+                console.log('hahah')
+                this.$axios.post('/article',this.formData).then(res => {
+                    console.log(res)
+                    if(res.code == 200) {
+                    this.$message.success('笔记发布成功!');
+                    setTimeout(() => {
+                         this.$router.push('/index')
+                    }, 500)
+                    }
+                })
+            }
+        },
+        mounted () {
+        this.getLabels();
+      }
     }
 </script>
 
@@ -83,6 +121,15 @@
     /* .ql-container{
         min-height: 300px;
     } */
+    .labels {
+      margin-top: 10px;
+    }
+     .labels-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: #409eff;
+      }
+
 </style>
 
 

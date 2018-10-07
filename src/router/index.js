@@ -10,6 +10,7 @@ const components={
   index:()=>import('@/views/index/index'),
   writenote:()=>import('@/views/writenote/writenote'),
   register:()=>import('@/views/register/index'),
+  note:()=>import('@/views/note/note'),
 }
 
 
@@ -33,6 +34,11 @@ var router=new Router({
           path: 'writenote',
           name: 'writenote',
           component: components.writenote
+        }, 
+        {
+          path: 'note/:id',
+          name: 'note',
+          component: components.note
         }, 
     ]
     },

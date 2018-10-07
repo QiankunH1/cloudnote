@@ -31,7 +31,7 @@
               
             </div>
              <div class="logout btn-wrap mb30">
-                <el-button type="primary" >
+                <el-button type="primary" @click="handleLogout">
                     退出登录
                 </el-button>
             </div>
@@ -66,6 +66,25 @@
                     }
                 this.$store.commit('CHANGE_userInfo',res.userData )   
                 })  
+            },
+            handleLogout(){
+                this.$axios.get('/logout').then(res=>{
+                    console.log(res)
+                    let userInfo={
+                            avatar:'',
+                            email:'',
+                            username:'' 
+                        }
+                    if(res.code==200){
+                        console.log('hahah')
+                        this.$message.success(res.msg)
+                        this.$store.commit('CHANGE_userInfo',userInfo)//清空vuex中保留的用户信息
+                        this.$router.push('/index')
+                    }else{
+                        this.$store.commit('CHANGE_userInfo',userInfo)//清空vuex中保留的用户信息
+                        this.$message.info('信息已过期，自动退出')
+                    }
+                })
             }
         },
         computed:{
